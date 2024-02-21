@@ -209,3 +209,9 @@ Status Code 404 (Organization Not Found) or 500 (Internal Server Error)
   - Status Code 204 (No Content)
 - **Response (Error):** 
   - Status Code 404 (Organization Not Found) or 500 (Internal Server Error)
+
+
+## Testing
+- I added Mocha testing that can be found inside the **Test** folder located in the root of the project folder.
+- The file is called **organizationController.mjs**.
+- Use the command `npm run test` or `npm test` to run the test file.
