@@ -3,11 +3,12 @@
   "version": "0.0.1",
   "description": "A coding challenge for backend services",
   "main": "app.js",
+  "type": "commonjs",
   "scripts": {
     "test-lint-js": "npx eslint src/**/*.js test/**/*.js",
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "mocha"
+    "test": "mocha --exit"
   },
   "extension": [
     "js",
@@ -39,13 +40,10 @@
   },
   "devDependencies": {
     "chai": "^5.1.0",
-    "chai-http": "^4.4.0",
     "eslint": "^8.56.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.29.1",
     "mocha": "^10.3.0",
-    "request": "^2.88.2",
-    "sinon": "^17.0.1",
     "supertest": "^6.3.4"
   }
 }

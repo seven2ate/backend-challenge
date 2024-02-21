@@ -15,18 +15,10 @@ app.use(express.json()); // Enable JSON request bodies
 app.use('/api/organizations', organizationRouter);
 app.use('/api/users', userRouter);
 
-const start = async () => {
-  try {
-    db.once('open', () => {
-      app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}...`);
-      });
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-start();
+db.once('open', () => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}...`);
+  });
+});
 
 module.exports = app;
