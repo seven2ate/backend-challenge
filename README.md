@@ -1,132 +1,211 @@
-# EstateSpace Back End Development Challenge
+# Backend - Challenge API Documentation
 
-Hi! Thank you for your interest in [EstateSpace][eswebsite]. Our evaluation processes begins with an open-ended coding challenge that we will discuss during your interview. There is not one correct way to approach this challenge. Rather, we would like to see your approach and your creativity in solving the problem.
+# To start
+1. Open your terminal and make sure you're in the backend-challenge folder.
+2. Run `npm i` command to install all dependencies.
+4. Add a `.env` file in the root.
+5. Add the `MONGO_URI` connection string I provided in the email & your `JWT_SECRET` to the .env
+7. Run `npm start` to start your server.
 
-We appreciate that any coding challenge represents an investment of your time. We hope you see the value in having a code sample that is relatable to both of us for the interview. Should you be unsuccessful, you should feel free to use the code you developed for this challenge in any way that you would like.
+# User Registration & Login API
+I added the ability to register a user and to use those credentials to login. 
 
-If you are successful, then we will set up an in-person interview and use this code as the starting point in our conversation.
+The register endpoint is http://localhost:8080/api/users/register (POST)
 
-# The Challenge
-EstateSpace uses a JavaScript-based stack currently, which means [Node.js][nodejs] on the backend. We develop microservices using Node. The challenge would be to write a microservice to read data from a database and return it using a REST based resource.
+The login endpoint is http://localhost:8080/api/users/login (POST)
 
-Ideally, this would take a mid-level developer up to two hours to complete the minimum requirements.
+The request body must include `email` and `password`.
 
-## Minimum Server-side Challenge Requirements
-We would like a minimum server-side capability. These are:
-- A read route that returns a specific object when a specific id is specified.
+Example -> `{ "email": "test@test.com", "password": "1234" }`.
 
-The basic format for the read route would conform to:
+A successful response will show a status code of `200` and include a user object with id, a hashed password, 
 
-`[VERB] [base]/[type]/[id]{?param1=value1{...&paramn=valuen}}`
+email and a token that can be added in the authorization headers in the organization routes that require authentication. 
 
-where:
-- `VERB` represents the HTTP verb (GET, POST, etc.)
-- `[]` denotes required information
-- `base` denotes the base URL, such as [http://localhost:8080](http://localhost:8080)
-- `type` denotes the microservice resource name, such as "Organization"
-- `id` denotes the object ID to look up
-- `{}` denotes optional values
-- `param` denotes the name in the datamodel to query against
-- `value` denotes the value to query for
-- `…` denotes that there can be any number of query parameters
+Unsuccessful responses will show a status code of `401` with a message of `User not found` or `Invalid password`.
 
-## Data model
-Please base your data model off of this specification for an organization.
 
-Organization:
+# Organization Api
 
-```js
-{
-  "id": "", // unique identifier
-  "name": "", // name of the organization
-  "addresses": [] // array of locations
-}
-```
+### Authentication
 
-Location:
+All routes, except the two GET methods (`GET /api/organizations` and `GET /api/organizations/:id`), require authentication. You must log in and attach the bearer token to the headers when making requests to the create, update, and delete endpoints.
 
-```js
-{
-  "street": "", // The postal address line; contains the house number, apartment number, street name, etc.
-  "city": "", // Name of the city, town, village or other community or delivery center.
-  "state": "", // Sub-division (e.g. state, province, or territory) of the country; abbreviations are accepted; ISO codes are not encouraged since this is a globalized field.
-  "zip": "", // A postal code designating a specific region, district, or zone as defined by the United States Postal Service (USPS).
-  "country": "" // Name of the country (aka nation). ISO-3166 3-letter codes can be used in place of a full country name.
-}
-```
+## Endpoints
 
-## Where to concentrate your effort
-In a server-side microservices approach, there are many areas that need to be developed when creating an API. Working software is always top priority, however, so meet the minimum requirements. Should you want to go above and beyond the minimum requirements, please feel free to add to your submittal either via code or via documentation in [common mark][commonmark] compliant documentation.
-- Other routes
-  - a read all or search route that returns more than object
-  - a read route that returns one object by id
-  - a create route
-  - a delete route
-  - an update route using something like [jsonpatch](http://jsonpatch.com/)
-- Testing
-  - a [Mocha][mocha]-based test that shows the functionality working
-- Error handling
-  - Which HTTP Codes should be returned and under which circumstances?
-  - Should the user of the API get more information than an HTTP status code?
-  - Do integration tests reflect these error conditions?
-  - etc.
-- Data Modeling (ie. Mongoose for schema modeling)
-- Debug statements
-- [TDD]
-- Service security
-- HTTP header security
-- Encrypted communications
-- Caching
-- Microservice health checks
-- Database communications security
-- Code quality, such as unit test coverage
-- Style, such as using [ESLint][eslint] and specific rules, such as [Airbnb][airbnb-eslint]
-- Application to showcase using the backend API
+### Get All Organizations
 
-# Prerequisites
-- A basic understanding of source code control, [git][git-scm] is required.
-- You must make your code available via a [GitHub][github] account.
-- All JavaScript shall be written using [ES6][ES6] standards.
-- You should be familiar with creating data APIs.
+- **URL:** `GET /api/organizations`
+- **Description:** Retrieves all organizations.
+- **Testing:** Send a GET request to the endpoint URL with appropriate authentication headers.
+- **Success Response (Status Code 200):** 
+  ```json
+  [
+    {
+      "_id": "611f0b2929f37b001bd5b786",
+      "name": "Example Organization 1",
+      "addresses": [
+        {
+          "street": "123 Main St",
+          "city": "Anytown",
+          "state": "CA",
+          "zip": "12345",
+          "country": "USA"
+        },
+        ...
+      ],
+      "__v": 0
+    },
+    {
+      "_id": "611f0b2929f37b001bd5b787",
+      "name": "Example Organization 2",
+      "addresses": [
+        {
+          "street": "456 Elm St",
+          "city": "Othertown",
+          "state": "NY",
+          "zip": "67890",
+          "country": "USA"
+        },
+        ...
+      ],
+      "__v": 0
+    }
+  ]
 
-# Getting Started
-1. Fork this [repository][repository].
-1. Clone the fork to your personal machine.
-1. Start coding.
-1. Commit changes to your fork as you see fit.
+- **Error Responses:**
+- Status Code 404 (Organization Not Found)
+- Status Code 500 (Internal Server Error)
 
-# Submission
 
-When you are comfortable with your results, please email your fork to
-[g3-dev@griffingroupglobal.com](mailto:g3-dev@griffingroupglobal.com). Please keep your emails short and to the point.
+### Get by ID
 
-Any specific notes or further information you would like to add about your submittal, should be included in the GitHub project.
+- **URL:** `GET /api/organizations/:id`
+- **Description:** Retrieves an organization by ID. You can also provide query parameters to filter the organization's addresses.
+- **Request Params:**
+  - `id`: The ID of the organization to retrieve.
+- **Query Parameters (Optional):**
+  - `city`: Filter organizations by city.
+  - `state`: Filter organizations by state.
+  - `zip`: Filter organizations by ZIP code.
+  - `country`: Filter organizations by country.
+- **Example URL with Query Parameters:** `GET /api/organizations/611f0b2929f37b001bd5b786?city=Example%20City&state=Example%20State`
+- **Response (Success):** 
+  ```json
+  {
+    "_id": "611f0b2929f37b001bd5b786",
+    "name": "Example Organization",
+    "addresses": [
+      {
+        "_id": "611f0b2929f37b001bd5b787",
+        "street": "123 Example St",
+        "city": "Example City",
+        "state": "Example State",
+        "zip": "12345",
+        "country": "Example Country"
+      },
+      {
+        "_id": "611f0b2929f37b001bd5b788",
+        "street": "456 Example St",
+        "city": "Example City",
+        "state": "Example State",
+        "zip": "54321",
+        "country": "Example Country"
+      }
+    ],
+    "__v": 0
+  }
+- Response (Error):
+Status Code 404 (Organization Not Found) or 500 (Internal Server Error)
 
-Do not feel as though you must create a public fork of this repository. You are free to create a throwaway GitHub account or private fork. In those cases, please let us know so that we may send you the GitHub IDs to add to the repository.
+### Create Organization
 
-# Evaluations
+- **URL:** `POST /api/organizations`
+- **Description:** Creates a new organization.
+- **Authentication Required:** Yes (Attach Bearer token to headers)
+- **Request Body:** JSON object representing the organization data. 
+  ```json
+  {
+    "name": "Example Organization",
+    "addresses": [
+      {
+        "street": "123 Example St",
+        "city": "Example City",
+        "state": "Example State",
+        "zip": "12345",
+        "country": "Example Country"
+      }
+    ]
+  }
 
-We realize there are many items to look at when creating a microservice. Please do not feel like you have to do everything. Please do not feel like you must use Node, albeit that is our primary language platform. If you have less security experience, but more search and database experience, then use that to your advantage in the code you write. Give us a heads up by documenting your code to let us know where and why you concentrated on certain
-items.
 
-As you develop your solution, you may have ideas on other avenues to pursue. Please feel free to include them inline as documented source or as additional [Common Mark][commonmark] compliant notes in your fork.
+- **Response (Success):**
+Status Code 201
+  ```json
+  {
+    "_id": "611f0b2929f37b001bd5b786",
+    "name": "Example Organization",
+    "addresses": [
+      {
+        "_id": "611f0b2929f37b001bd5b787",
+        "street": "123 Example St",
+        "city": "Example City",
+        "state": "Example State",
+        "zip": "12345",
+        "country": "Example Country"
+      }
+    ],
+    "__v": 0
+  }
 
-We look for creativity, originality, and a good user experience in your application if that's an area you focused on.
+- **Response (Error):**
+Status Code 400 (Validation Error) or 500 (Internal Server Error)
 
-We look for readability, good architectural decisions, modularity, and a solid approach to testing in your code.
+### Update Organization
 
-# License
-This project is [MIT licensed][mitlicense].
+- **URL:** `PUT /api/organizations/:id`
+- **Description:** Updates an existing organization by ID.
+- **Authentication Required:** Yes (Attach Bearer token to headers)
+- **Request Params:** 
+  - `id`: The ID of the organization to update.
+- **Request Body:** JSON object representing the updated organization data. 
+  ```json
+  {
+    "city": "your new city",
+  }
 
-[eswebsite]:https://www.estatespace.com
-[git-scm]:https://git-scm.com/
-[github]:https://github.com/
-[nodejs]:https://nodejs.org/en/
-[TDD]:https://en.wikipedia.org/wiki/Test-driven_development
-[ES6]:http://www.ecma-international.org/ecma-262/6.0/
-[eslint]:https://eslint.org/
-[airbnb-eslint]:https://www.npmjs.com/package/eslint-config-airbnb
-[mocha]:https://mochajs.org/
-[repository]:https://github.com/GriffinGroupGlobal/backend-challenge
-[mitlicense]:https://en.wikipedia.org/wiki/MIT_License
-[commonmark]:https://spec.commonmark.org/
+- **Response (Success):**
+Status Code 200
+  ```json
+  {
+    "_id": "611f0b2929f37b001bd5b786",
+    "name": "Updated Organization Name",
+    "addresses": [
+      {
+        "_id": "611f0b2929f37b001bd5b787",
+        "street": "Updated Street Address",
+        "city": "your new city",
+        "state": "Updated State",
+        "zip": "54321",
+        "country": "Updated Country"
+      }
+    ],
+    "__v": 0
+  }
+
+
+- **Response (Error):**
+Status Code 404 (Organization Not Found) or 500 (Internal Server Error)
+
+
+### Delete Organization
+
+- **URL:** `DELETE /api/organizations/:id`
+- **Description:** Deletes an organization by ID.
+- **Authentication Required:** Yes (Attach Bearer token to headers)
+- **Request Params:** 
+  - `id`: The ID of the organization to delete.
+- **Response (Success):** 
+  - Status Code 204 (No Content)
+- **Response (Error):** 
+  - Status Code 404 (Organization Not Found) or 500 (Internal Server Error)
