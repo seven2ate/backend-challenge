@@ -115,6 +115,7 @@ All routes, except the two GET methods (`GET /api/organizations` and `GET /api/o
     ],
     "__v": 0
   }
+- **NOTE** A success response from a request with query param will be an array or orgaizations.
 - Response (Error):
 Status Code 404 (Organization Not Found) or 500 (Internal Server Error)
 
